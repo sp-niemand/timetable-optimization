@@ -5,8 +5,8 @@ import visualization
 if len(sys.argv) < 3:
     print("Wrong number of arguments")
     exit(255)
-dependency_graph_path = sys.argv[1]
-result_path = sys.argv[2]
+f = sys.argv[1]
+result = sys.argv[2]
 
-g = input.read_task_dependency_graph(dependency_graph_path)
-visualization.write_adjlist(g, result_path)
+m = input.read_task_parameters(f)
+visualization.write_matrix(m, result)
