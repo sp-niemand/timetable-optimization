@@ -1,20 +1,20 @@
-from networkx.readwrite.adjlist import write_adjlist
+import numpy as np
+import networkx as nx
 
 
 def write_graph(graph, path):
     """
-    :param networkx.Graph graph:
+    :param nx.Graph graph:
     :param str path:
     """
-    write_adjlist(graph, path)
+    nx.write_adjlist(graph, path)
 
 
 def write_matrix(matrix, path):
     """
-    :param list[list[int]] matrix:
+    :param np.matrix matrix:
     :param str path:
     """
     with open(path, 'w') as f:
         for row in matrix:
-            f.write(','.join([str(x) for x in row]))
-            f.write('\n')
+            f.write(','.join([str(x) for x in row.tolist()]) + '\n')

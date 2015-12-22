@@ -1,20 +1,22 @@
 from networkx.readwrite.adjlist import read_adjlist
-from networkx import DiGraph
-
+import networkx as nx
+import numpy as np
 
 def read_task_dependency_graph(path):
     """
-    :param path: file to read dependency graph from
+    :param str path: file to read dependency graph from
+    :rtype nx.DiGraph
     :return: task dependency graph
     :exception FileNotFoundError If file not found
     """
-    base_graph = DiGraph()
+    base_graph = nx.DiGraph()
     return read_adjlist(path, create_using=base_graph)
 
 
 def read_task_parameters(path):
     """
-    :param path: CSV-formatted file to read task parameters from
+    :param str path: CSV-formatted file to read task parameters from
+    :rtype np.matrix
     :return: task parameters matrix
     """
     with open(path) as f:
@@ -22,4 +24,4 @@ def read_task_parameters(path):
             [int(x) for x in row.split(',')]
             for row in f if row.strip() != ''
         ]
-    return result
+    return np.matrix(result, np.uint)
