@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 from itertools import dropwhile
 
+
 def calculate_cost_matrix(task_costs):
     """
     :param np.ndarray task_costs:

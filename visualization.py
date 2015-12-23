@@ -18,3 +18,17 @@ def write_matrix(matrix, path):
     with open(path, 'w') as f:
         for row in matrix:
             f.write(','.join([str(x) for x in row.tolist()]) + '\n')
+
+
+def write_timetable(timetable, path=None):
+    """
+    :param list[list[int]] timetable:
+    :param str|None path:
+    :return:
+    """
+    result = '\n'.join((str(x) for x in timetable))
+    if path:
+        with open(path, 'w') as f:
+            f.write(result)
+    else:
+        print(result)
