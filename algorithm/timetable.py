@@ -80,3 +80,22 @@ def get_optimal_timetable(task_costs):
                         start_node, finish_node)
                 result[processor][position] = task
     return [list(dropwhile(lambda x: x < 0, a)) for a in result]
+
+
+def calculate_mean_weighted_flow_time(timetable, task_costs):
+    """
+    :param list[list[int]] timetable:
+    :param numpy.matrix task_costs:
+    :return:
+    """
+    def _tasks_time(tasks, processor):
+        result = 0
+        for task in tasks:
+            result += result + task_costs[processor, task]
+        return result
+
+    result = sum((
+        _tasks_time(timetable[processor], processor)
+        for processor in range(0, len(timetable))
+    ))
+    return result

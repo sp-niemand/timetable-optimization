@@ -4,8 +4,7 @@ from itertools import groupby
 
 def get_node_levels(graph):
     """
-    Adds attribute "level" for each node, which represents it's level in
-    the graph if is topologically sorted
+    Returns the level of each node in graph
 
     :param nx.DiGraph graph:
     :rtype dict
@@ -32,4 +31,4 @@ def iterate_levels(graph):
     node_levels = get_node_levels(graph)
     sorted_nodes = sorted(node_levels.items(), key=_level)
     for level, node_iter in groupby(sorted_nodes, key=_level):
-        yield (level, (node for node, _ in node_iter))
+        yield (level, list(node_iter))
