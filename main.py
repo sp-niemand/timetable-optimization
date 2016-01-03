@@ -27,4 +27,4 @@ if args.task_dependency_path:
     print('to be continued...')
 else:
     timetable = at.get_optimal_timetable(task_costs)
-    visualization.write_timetable(at.get_optimal_timetable(task_costs), task_costs)
+    visualization.write_timetable(timetable, task_costs)

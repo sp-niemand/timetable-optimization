@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 from itertools import dropwhile
-
+from algorithm.graph import successive_shortest_path
 
 def calculate_cost_matrix(task_costs):
     """
@@ -64,10 +64,10 @@ def get_optimal_timetable(task_costs):
         position = task_count - position_from_end - 1
         return task, processor, position
 
-    problem_graph = create_timetable_graph(task_costs)
-    flow_dict = nx.max_flow_min_cost(problem_graph, 'x0', 'y0', weight='cost')
-
     processor_count, task_count = task_costs.shape
+
+    problem_graph = create_timetable_graph(task_costs)
+    flow_dict = successive_shortest_path(problem_graph, 'x0', 'y0')
 
     result = [[-1] * task_count for _ in range(0, processor_count)]
     for start_node in flow_dict:
