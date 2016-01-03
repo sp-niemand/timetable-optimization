@@ -89,9 +89,11 @@ def calculate_mean_weighted_flow_time(timetable, task_costs):
     :return:
     """
     def _tasks_time(tasks, processor):
+        acc = 0
         result = 0
         for task in tasks:
-            result += result + task_costs[processor, task]
+            acc += int(task_costs[processor, task])
+            result += acc
         return result
 
     result = sum((
@@ -99,3 +101,13 @@ def calculate_mean_weighted_flow_time(timetable, task_costs):
         for processor in range(0, len(timetable))
     ))
     return result
+
+if __name__ == '__main__':
+    import input as i
+    costs = i.read_task_parameters('test_data/book/task_parameters')
+    timetable = [
+        [2, 7, 4],
+        [],
+        [6, 3, 1, 5, 0]
+    ]
+    print(calculate_mean_weighted_flow_time(timetable, costs))
