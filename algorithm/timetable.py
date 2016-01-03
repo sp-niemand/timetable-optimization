@@ -42,7 +42,7 @@ def create_timetable_graph(task_costs):
             result.add_node(new_y)
             result.add_edge(new_y, 'y0', capacity=1, cost=0)
 
-            result.add_edge(new_x, new_y, capacity=1, cost=cost_matrix[i][j])
+            result.add_edge(new_x, new_y, capacity=1, cost=int(cost_matrix[i][j]))
 
     return result
 
