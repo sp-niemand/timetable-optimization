@@ -31,4 +31,4 @@ def iterate_levels(graph):
     node_levels = get_node_levels(graph)
     sorted_nodes = sorted(node_levels.items(), key=_level)
     for level, node_iter in groupby(sorted_nodes, key=_level):
-        yield (level, list(node_iter))
+        yield (level, list(map(lambda x: x[0], node_iter)))

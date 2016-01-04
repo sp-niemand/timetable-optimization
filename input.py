@@ -10,7 +10,7 @@ def read_task_dependency_graph(path):
     :exception FileNotFoundError If file not found
     """
     base_graph = nx.DiGraph()
-    return read_adjlist(path, create_using=base_graph)
+    return read_adjlist(path, create_using=base_graph, nodetype=int)
 
 
 def read_task_parameters(path):

@@ -50,6 +50,7 @@ def create_timetable_graph(task_costs):
 def get_optimal_timetable(task_costs):
     """
     :param np.matrix task_costs:
+    :rtype list[list[int]]
     :return:
     """
 
