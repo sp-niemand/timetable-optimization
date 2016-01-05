@@ -27,7 +27,6 @@ class Task(Item):
 
 class Timetable:
     def __init__(self, processors):
-        self._processors = processors
         self._data = {p: [] for p in processors}
 
     def __iter__(self):
@@ -63,8 +62,6 @@ class Timetable:
 
     def _join_waits(self):
         for _, items in self:
-            if not items:
-                continue
             i = 1
             item_count = len(items)
             while i < item_count:
@@ -77,7 +74,7 @@ class Timetable:
 
     def _trim_waits(self):
         for _, items in self:
-            while isinstance(items[-1], Wait):
+            while items and isinstance(items[-1], Wait):
                 items.pop()
 
     def normalize(self):
@@ -88,11 +85,14 @@ class Timetable:
         """
         Adds waits for processors if needed so each processor is busy for the same time
         """
-        busy_times = {p: self.busy_time(p) for p in self._processors}
+        busy_times = {p: self.busy_time(p) for p in self.get_processors()}
         max_busy_time = max(busy_times.values())
-        for processor in self._processors:
+        for processor in self.get_processors():
             if busy_times[processor] < max_busy_time:
                 self.add_wait(processor, max_busy_time - busy_times[processor])
+
+    def get_processors(self):
+        return list(self._data.keys())
 
     def copy(self):
         """
@@ -107,7 +107,7 @@ class Timetable:
         :rtype Timetable
         :return: Concatenation result
         """
-        if set(self._processors).symmetric_difference(other._processors):
+        if set(self.get_processors()).symmetric_difference(other.get_processors()):
             raise UncompatibleTimetablesException()
         result = self.copy()  # type: Timetable
         result.equalize_busy_time()

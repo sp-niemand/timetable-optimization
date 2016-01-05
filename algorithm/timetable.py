@@ -2,6 +2,8 @@ import numpy as np
 import networkx as nx
 from itertools import dropwhile
 from algorithm.graph import successive_shortest_path
+from classes.timetable import Timetable
+
 
 def calculate_cost_matrix(task_costs):
     """
@@ -50,17 +52,17 @@ def create_timetable_graph(task_costs):
 def get_optimal_timetable(task_costs):
     """
     :param np.matrix task_costs:
-    :rtype list[list[int]]
+    :rtype classes.timetable.Timetable
     :return:
     """
 
-    def _edge_to_task_processor_position(start_node, finish_node):
+    def _edge_to_task_processor_position(u, v):
         """
         :rtype (int, int, int)
-        :return:
+        :return: task, processor, position
         """
-        task = int(finish_node[1:]) - 1
-        recommendation = int(start_node[1:]) - 1
+        task = int(v[1:]) - 1
+        recommendation = int(u[1:]) - 1
         position_from_end, processor = divmod(recommendation, processor_count)
         position = task_count - position_from_end - 1
         return task, processor, position
@@ -70,7 +72,7 @@ def get_optimal_timetable(task_costs):
     problem_graph = create_timetable_graph(task_costs)
     flow_dict = successive_shortest_path(problem_graph, 'x0', 'y0')
 
-    result = [[-1] * task_count for _ in range(0, processor_count)]
+    timetable_dict = {p: [-1] * task_count for p in range(0, processor_count)}
     for start_node in flow_dict:
         if start_node[0] != 'x' or start_node == 'x0':
             continue
@@ -79,36 +81,10 @@ def get_optimal_timetable(task_costs):
             if finish_node_dict[finish_node] > 0:
                 task, processor, position = _edge_to_task_processor_position(
                         start_node, finish_node)
-                result[processor][position] = task
-    return [list(dropwhile(lambda x: x < 0, a)) for a in result]
+                timetable_dict[processor][position] = task
 
-
-def calculate_mean_weighted_flow_time(timetable, task_costs):
-    """
-    :param list[list[int]] timetable:
-    :param numpy.matrix task_costs:
-    :return:
-    """
-    def _tasks_time(tasks, processor):
-        acc = 0
-        result = 0
-        for task in tasks:
-            acc += int(task_costs[processor, task])
-            result += acc
-        return result
-
-    result = sum((
-        _tasks_time(timetable[processor], processor)
-        for processor in range(0, len(timetable))
-    ))
+    result = Timetable(list(range(0, processor_count)))
+    for processor in timetable_dict:
+        for task in dropwhile(lambda x: x < 0, timetable_dict[processor]):
+            result.add_task(processor, task, task_costs[processor, task])
     return result
-
-if __name__ == '__main__':
-    import input as i
-    costs = i.read_task_parameters('test_data/book/task_parameters')
-    timetable = [
-        [2, 7, 4],
-        [],
-        [6, 3, 1, 5, 0]
-    ]
-    print(calculate_mean_weighted_flow_time(timetable, costs))

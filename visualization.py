@@ -21,18 +21,15 @@ def write_matrix(matrix, path):
             f.write(','.join([str(x) for x in row.tolist()]) + '\n')
 
 
-def write_timetable(timetable, task_costs, path=None):
+def write_timetable(timetable, path=None):
     """
-    :param list[list[int]] timetable:
-    :param numpy.matrix task_costs:
+    :param classes.timetable.Timetable timetable:
     :param str|None path:
     :return:
     """
-    result = '\n'.join((str(x) for x in timetable))
+    message = 'Total flow time = {}\n{}'.format(timetable.total_flow_time(), str(timetable))
     if path:
         with open(path, 'w') as f:
-            f.write('Timetable time = {}\n'.format(at.calculate_mean_weighted_flow_time(timetable, task_costs)))
-            f.write(result)
+            f.write(message)
     else:
-        print('Timetable time = {}'.format(at.calculate_mean_weighted_flow_time(timetable, task_costs)))
-        print(result)
+        print(message)

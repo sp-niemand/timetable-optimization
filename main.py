@@ -1,5 +1,4 @@
 import input
-import algorithm.timetable as at
 import visualization
 import argparse
 import os.path
@@ -24,7 +23,10 @@ if args.task_dependency_path and not os.path.isfile(args.task_dependency_path):
 
 task_costs = input.read_task_parameters(args.task_parameter_path)
 if args.task_dependency_path:
-    print('to be continued...')
+    from algorithm.dependent_timetable import get_optimal_timetable
+    task_dependencies = input.read_task_dependency_graph(args.task_dependency_path)
+    timetable = get_optimal_timetable(task_costs, task_dependencies)
 else:
-    timetable = at.get_optimal_timetable(task_costs)
-    visualization.write_timetable(timetable, task_costs)
+    from algorithm.timetable import get_optimal_timetable
+    timetable = get_optimal_timetable(task_costs)
+visualization.write_timetable(timetable)
