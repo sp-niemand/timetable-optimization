@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-import algorithm.timetable as at
+import algorithm.schedule as at
 
 
 def write_graph(graph, path):
@@ -21,13 +21,13 @@ def write_matrix(matrix, path):
             f.write(','.join([str(x) for x in row.tolist()]) + '\n')
 
 
-def write_timetable(timetable, path=None):
+def write_schedule(schedule, path=None):
     """
-    :param classes.timetable.Timetable timetable:
+    :param classes.schedule.Schedule schedule:
     :param str|None path:
     :return:
     """
-    message = 'Total flow time = {}\n{}'.format(timetable.total_flow_time(), str(timetable))
+    message = 'Total flow time = {}\n{}'.format(schedule.total_flow_time(), str(schedule))
     if path:
         with open(path, 'w') as f:
             f.write(message)

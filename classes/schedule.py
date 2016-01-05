@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 
-class UncompatibleTimetablesException(Exception):
+class UncompatibleSchedulesException(Exception):
     pass
 
 
@@ -25,7 +25,7 @@ class Task(Item):
         return 'Task(name={}, time={})'.format(self.name, self.time)
 
 
-class Timetable:
+class Schedule:
     def __init__(self, processors):
         self._data = {p: [] for p in processors}
 
@@ -96,21 +96,21 @@ class Timetable:
 
     def copy(self):
         """
-        :rtype Timetable
+        :rtype Schedule
         :return:
         """
         return deepcopy(self)
 
     def concat(self, other):
         """
-        Concatenate the given timetable to self
+        Concatenate the given schedule to self
 
-        :param Timetable other:
+        :param Schedule other:
         """
-        if not isinstance(other, Timetable):
-            raise TypeError('Timetable can only be concatenated with another Timetable')
+        if not isinstance(other, Schedule):
+            raise TypeError('Schedule can only be concatenated with another Schedule')
         if set(self.get_processors()).symmetric_difference(other.get_processors()):
-            raise UncompatibleTimetablesException('operand has different processor data')
+            raise UncompatibleSchedulesException('operand has different processor data')
         self.equalize_busy_time()
         for processor, items in other:
             for item in items:
@@ -119,7 +119,7 @@ class Timetable:
         return self
 
     def __str__(self, *args, **kwargs):
-        result = 'Timetable'
+        result = 'Schedule'
         for processor, items in self:
             result += '\n{}: {}'.format(processor, ', '.join(str(item) for item in items))
         return result
@@ -130,7 +130,7 @@ class Timetable:
         return result
 
 if __name__ == '__main__':
-    t = Timetable([0, 1])
+    t = Schedule([0, 1])
     t.add_item(0, Task('a', 3))
     t.add_item(0, Task('b', 4))
     t.add_item(0, Task('bb', 6))

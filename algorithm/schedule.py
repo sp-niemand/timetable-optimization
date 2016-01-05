@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 from itertools import dropwhile
 from algorithm.graph import successive_shortest_path
-from classes.timetable import Timetable
+from classes.schedule import Schedule
 
 
 def calculate_cost_matrix(task_costs):
@@ -19,7 +19,7 @@ def calculate_cost_matrix(task_costs):
     return result
 
 
-def create_timetable_graph(task_costs):
+def create_schedule_graph(task_costs):
     """
     :param np.ndarray task_costs:
     :rtype nx.DiGraph
@@ -49,10 +49,10 @@ def create_timetable_graph(task_costs):
     return result
 
 
-def get_optimal_timetable(task_costs):
+def get_optimal_schedule(task_costs):
     """
     :param np.matrix task_costs:
-    :rtype classes.timetable.Timetable
+    :rtype classes.schedule.Schedule
     :return:
     """
 
@@ -69,10 +69,10 @@ def get_optimal_timetable(task_costs):
 
     processor_count, task_count = task_costs.shape
 
-    problem_graph = create_timetable_graph(task_costs)
+    problem_graph = create_schedule_graph(task_costs)
     flow_dict = successive_shortest_path(problem_graph, 'x0', 'y0')
 
-    timetable_dict = {p: [-1] * task_count for p in range(0, processor_count)}
+    schedule_dict = {p: [-1] * task_count for p in range(0, processor_count)}
     for start_node in flow_dict:
         if start_node[0] != 'x' or start_node == 'x0':
             continue
@@ -81,10 +81,10 @@ def get_optimal_timetable(task_costs):
             if finish_node_dict[finish_node] > 0:
                 task, processor, position = _edge_to_task_processor_position(
                         start_node, finish_node)
-                timetable_dict[processor][position] = task
+                schedule_dict[processor][position] = task
 
-    result = Timetable(list(range(0, processor_count)))
-    for processor in timetable_dict:
-        for task in dropwhile(lambda x: x < 0, timetable_dict[processor]):
+    result = Schedule(list(range(0, processor_count)))
+    for processor in schedule_dict:
+        for task in dropwhile(lambda x: x < 0, schedule_dict[processor]):
             result.add_task(processor, task, task_costs[processor, task])
     return result
