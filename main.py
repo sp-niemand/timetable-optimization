@@ -23,9 +23,13 @@ if args.task_dependency_path and not os.path.isfile(args.task_dependency_path):
 
 task_costs = input.read_task_parameters(args.task_parameter_path)
 if args.task_dependency_path:
-    from algorithm.dependent_schedule import get_optimal_schedule
+    from algorithm.dependent_schedule import get_optimal_schedule, NoOptimalSchedule
     task_dependencies = input.read_task_dependency_graph(args.task_dependency_path)
-    schedule = get_optimal_schedule(task_costs, task_dependencies)
+    try:
+        schedule = get_optimal_schedule(task_costs, task_dependencies)
+    except NoOptimalSchedule as e:
+        print(e)
+        exit(1)
 else:
     from algorithm.schedule import get_optimal_schedule
     schedule = get_optimal_schedule(task_costs)

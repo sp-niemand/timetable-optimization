@@ -1,5 +1,10 @@
 import networkx as nx
 from itertools import groupby
+from classes.exception import BaseException as BException
+
+
+class NotDirectedAcyclicGraph(BException):
+    pass
 
 
 def get_node_levels(graph):
@@ -9,9 +14,14 @@ def get_node_levels(graph):
     :param nx.DiGraph graph:
     :rtype dict
     :returns {<node>: <level>, ...}
+    :raises NotDirectedAcyclicGraph If dependency graph is not a directed acyclic graph
     """
     levels = {k: 0 for k in graph.nodes_iter()}
-    for node in nx.topological_sort(graph):
+    try:
+        topological_sort_result = nx.topological_sort(graph)
+    except nx.NetworkXUnfeasible:
+        raise NotDirectedAcyclicGraph()
+    for node in topological_sort_result:
         for successor in graph.successors_iter(node):
             successor_level_candidate = levels[node] + 1
             if levels[successor] < successor_level_candidate:
@@ -25,6 +35,7 @@ def iterate_levels(graph):
 
     :param nx.DiGraph graph:
     :return: iterator
+    :raises NotDirectedAcyclicGraph If dependency graph is not a directed acyclic graph
     """
     def _level(node_level_tuple):
         return node_level_tuple[1]

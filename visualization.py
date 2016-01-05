@@ -1,6 +1,5 @@
 import numpy as np
 import networkx as nx
-import algorithm.schedule as at
 
 
 def write_graph(graph, path):
