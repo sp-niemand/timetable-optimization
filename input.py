@@ -2,6 +2,7 @@ from networkx.readwrite.adjlist import read_adjlist
 import networkx as nx
 import numpy as np
 
+
 def read_task_dependency_graph(path):
     """
     :param str path: file to read dependency graph from
