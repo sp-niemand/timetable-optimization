@@ -14,5 +14,5 @@ def get_optimal_timetable(task_costs, dependency_graph):
     for (level, tasks) in ad.iterate_levels(dependency_graph):
         stage_timetable = at.get_optimal_timetable(task_costs[:, tasks])
         # TODO: учесть здесь, что номер задачи в каждом подрасписании меняется
-        result = result.concat(stage_timetable)
+        result.concat(stage_timetable)
     return result

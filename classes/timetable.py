@@ -103,19 +103,20 @@ class Timetable:
 
     def concat(self, other):
         """
+        Concatenate the given timetable to self
+
         :param Timetable other:
-        :rtype Timetable
-        :return: Concatenation result
         """
+        if not isinstance(other, Timetable):
+            raise TypeError('Timetable can only be concatenated with another Timetable')
         if set(self.get_processors()).symmetric_difference(other.get_processors()):
-            raise UncompatibleTimetablesException()
-        result = self.copy()  # type: Timetable
-        result.equalize_busy_time()
+            raise UncompatibleTimetablesException('operand has different processor data')
+        self.equalize_busy_time()
         for processor, items in other:
             for item in items:
-                result.add_item(processor, item)
-        result.normalize()
-        return result
+                self.add_item(processor, item)
+        self.normalize()
+        return self
 
     def __str__(self, *args, **kwargs):
         result = 'Timetable'
@@ -123,6 +124,10 @@ class Timetable:
             result += '\n{}: {}'.format(processor, ', '.join(str(item) for item in items))
         return result
 
+    def __add__(self, other):
+        result = self.copy()
+        result.concat(other)
+        return result
 
 if __name__ == '__main__':
     t = Timetable([0, 1])
@@ -143,5 +148,5 @@ if __name__ == '__main__':
     print(t.max_busy_time()); print(t.total_flow_time()); print(t)
     t.normalize()
     print(t.max_busy_time()); print(t.total_flow_time()); print(t)
-    t = t.concat(t)
+    t = t + t
     print(t.max_busy_time()); print(t.total_flow_time()); print(t)
