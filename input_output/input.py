@@ -8,6 +8,9 @@ class InvalidTaskParameters(BException):
     pass
 
 
+class InvalidTaskDependencies(BException):
+    pass
+
 def read_task_dependency_graph(path):
     """
     :param str path: file to read dependency graph from
@@ -16,7 +19,10 @@ def read_task_dependency_graph(path):
     :exception FileNotFoundError If file not found
     """
     base_graph = nx.DiGraph()
-    return read_adjlist(path, create_using=base_graph, nodetype=int)
+    try:
+        return read_adjlist(path, create_using=base_graph, nodetype=int)
+    except:
+        raise InvalidTaskDependencies('Error encountered while reading task dependencies file')
 
 
 def read_task_parameters(path):
@@ -33,5 +39,7 @@ def read_task_parameters(path):
                 for row in f if row.strip() != ''
             ]
         except ValueError as e:
-            raise InvalidTaskParameters('Error encountered while reading from task parameters file: ' + str(e))
+            raise InvalidTaskParameters('Error encountered while reading task parameters file: ' + str(e))
+        except:
+            raise InvalidTaskParameters('Error encountered while reading task parameters file')
     return np.matrix(result, np.uint)
