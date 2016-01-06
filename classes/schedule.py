@@ -50,17 +50,19 @@ class Schedule:
             for _, items in self
         )
 
-    # TODO: flow time отдельной таски
-
-    def total_flow_time(self):
-        result = 0
+    def _iterate_task_flow_times(self):
         for _, items in self:
             time_passed = 0
             for item in items:
                 time_passed += item.time
                 if isinstance(item, Task):
-                    result += time_passed
-        return result
+                    yield (item, time_passed)
+
+    def task_flow_times(self):
+        return {task.name: flow_time for task, flow_time in self._iterate_task_flow_times()}
+
+    def total_flow_time(self):
+        return sum(map(lambda x: x[1], self._iterate_task_flow_times()))
 
     def _join_waits(self):
         for _, items in self:
