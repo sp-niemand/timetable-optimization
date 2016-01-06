@@ -11,6 +11,7 @@ class InvalidTaskParameters(BException):
 class InvalidTaskDependencies(BException):
     pass
 
+
 def read_task_dependency_graph(path):
     """
     :param str path: file to read dependency graph from
@@ -42,4 +43,7 @@ def read_task_parameters(path):
             raise InvalidTaskParameters('Error encountered while reading task parameters file: ' + str(e))
         except:
             raise InvalidTaskParameters('Error encountered while reading task parameters file')
-    return np.matrix(result, np.uint)
+    try:
+        return np.matrix(result, np.uint)  # TODO: get rid of numpy.matrix
+    except:
+        raise InvalidTaskParameters('Error encountered while reading task parameters file')
