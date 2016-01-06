@@ -30,10 +30,15 @@ except InvalidTaskParameters as e:
     exit(1)
 
 if args.task_dependency_path:
-    from algorithm.dependent_schedule import get_optimal_schedule, NoOptimalSchedule
+    from algorithm.dependent_schedule import get_optimal_schedule, NoOptimalSchedule, validate_dependency_graph
     print("Task dependencies given.")
     task_dependencies = read_task_dependency_graph(args.task_dependency_path)
-    # TODO: валидировать зависимости с task_costs, чтобы они соответствовали
+
+    error = validate_dependency_graph(task_dependencies, task_costs)
+    if error:
+        print("Dependency graph validation error: {}".format(error))
+        exit(1)
+
     try:
         schedule = get_optimal_schedule(task_costs, task_dependencies)
     except NoOptimalSchedule as e:
