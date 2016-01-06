@@ -1,9 +1,10 @@
-import input
-import visualization
 import argparse
 import os.path
 import sys
-from input import InvalidTaskParameters
+
+from input_output.input import read_task_dependency_graph, read_task_parameters
+from input_output.input import InvalidTaskParameters
+from input_output.visualization import write_schedule
 
 # get and validate command line parameters
 
@@ -23,7 +24,7 @@ if args.task_dependency_path and not os.path.isfile(args.task_dependency_path):
 # main logic
 
 try:
-    task_costs = input.read_task_parameters(args.task_parameter_path)
+    task_costs = read_task_parameters(args.task_parameter_path)
 except InvalidTaskParameters as e:
     print(e)
     exit(1)
@@ -31,7 +32,7 @@ except InvalidTaskParameters as e:
 if args.task_dependency_path:
     from algorithm.dependent_schedule import get_optimal_schedule, NoOptimalSchedule
     print("Task dependencies given.")
-    task_dependencies = input.read_task_dependency_graph(args.task_dependency_path)
+    task_dependencies = read_task_dependency_graph(args.task_dependency_path)
     # TODO: валидировать зависимости с task_costs, чтобы они соответствовали
     try:
         schedule = get_optimal_schedule(task_costs, task_dependencies)
@@ -42,4 +43,4 @@ else:
     from algorithm.schedule import get_optimal_schedule
     print("No task dependencies.")
     schedule = get_optimal_schedule(task_costs)
-visualization.write_schedule(schedule)
+write_schedule(schedule)
