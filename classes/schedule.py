@@ -50,6 +50,8 @@ class Schedule:
             for _, items in self
         )
 
+    # TODO: flow time отдельной таски
+
     def total_flow_time(self):
         result = 0
         for _, items in self:
