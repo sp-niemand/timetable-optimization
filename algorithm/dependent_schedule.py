@@ -1,3 +1,7 @@
+"""
+Составление расписаний для зависимых задач
+"""
+
 import algorithm.schedule as at
 import algorithm.dependency as ad
 from classes.schedule import Schedule, Task
@@ -11,6 +15,10 @@ class NoOptimalSchedule(BException):
 
 def validate_dependency_graph(dependency_graph, task_costs):
     """
+    Проверяет, нет ли в графе зависимостей задач, которые не описаны
+    в матрице task_costs. Также добавляет в граф зависимостей задачи,
+    которых там не хватает
+
     :param networkx.DiGraph dependency_graph:
     :param numpy.matrix task_costs:
     :rtype None|str
@@ -28,6 +36,8 @@ def validate_dependency_graph(dependency_graph, task_costs):
 
 def get_optimal_schedule(task_costs, dependency_graph):
     """
+    Возвращает расписание для зависимых задач
+
     :param numpy.matrix task_costs:
     :param networkx.DiGraph dependency_graph:
     :return:
@@ -36,8 +46,12 @@ def get_optimal_schedule(task_costs, dependency_graph):
     processor_count, _ = task_costs.shape
     result = Schedule(list(range(0, processor_count)))
     try:
+
+        #обходим граф зависимости по уровням
         for (level, tasks) in ad.iterate_levels(dependency_graph):
+            # составление подматрицы для уровня тасок
             stage_schedule = at.get_optimal_schedule(task_costs[:, tasks])
+            # переименование тасков правильно
             for proc, items in stage_schedule:
                 for item in items:
                     if isinstance(item, Task):

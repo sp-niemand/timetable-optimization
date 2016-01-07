@@ -1,3 +1,7 @@
+"""
+Нахождение оптимального расписания для независимых задач
+"""
+
 import numpy as np
 import networkx as nx
 from itertools import dropwhile
@@ -7,6 +11,8 @@ from classes.schedule import Schedule
 
 def calculate_cost_matrix(task_costs):
     """
+    Составление матрицы C для алгоритма
+
     :param np.ndarray task_costs:
     :rtype np.ndarray
     :return:
@@ -21,6 +27,8 @@ def calculate_cost_matrix(task_costs):
 
 def create_schedule_graph(task_costs):
     """
+    Создание транспортной сети для алгоритма
+
     :param np.ndarray task_costs:
     :rtype nx.DiGraph
     :return:
@@ -51,6 +59,8 @@ def create_schedule_graph(task_costs):
 
 def get_optimal_schedule(task_costs):
     """
+    Возвращает оптимальное расписание
+
     :param np.matrix task_costs:
     :rtype classes.schedule.Schedule
     :return:
@@ -58,6 +68,8 @@ def get_optimal_schedule(task_costs):
 
     def _edge_to_task_processor_position(u, v):
         """
+        Дешифрует ребро (пару вершин) в место и процессор для таски
+
         :rtype (int, int, int)
         :return: task, processor, position
         """

@@ -1,56 +1,107 @@
+"""
+Класс расписания
+"""
+
 from copy import deepcopy
+from classes.exception import BaseException as BException
 
 
-class UncompatibleSchedulesException(Exception):
+class UncompatibleSchedulesException(BException):
     pass
 
 
 class Item:
+    """
+    Базовый класс элемента расписания
+    """
     def __init__(self, time):
-        self.time = time
+        self.time = time  # свойство "занимаемое время"
 
 
 class Wait(Item):
+    """
+    Ожидание в расписании. Наследуется от Item
+    """
     def __str__(self, *args, **kwargs):
         return 'Wait(time={})'.format(self.time)
 
 
 class Task(Item):
+    """
+    Задача в расписании
+    """
     def __init__(self, name, time):
         super().__init__(time)
-        self.name = name
-        self.time = time
+        self.name = name  # имя задачи
 
     def __str__(self, *args, **kwargs):
         return 'Task(name={}, time={})'.format(self.name, self.time)
 
 
 class Schedule:
+    """
+    Класс расписания. В нём хранятся расписания для каждого процессора в виде
+    списка Item (либо Task, либо Wait)
+    """
     def __init__(self, processors):
         self._data = {p: [] for p in processors}
 
-    def __iter__(self):
+    def __iter__(self):  # синтаксический сахар для итерации по расписанию
         return iter(self._data.items())
 
     def add_item(self, processor, item):
+        """
+        Добавление элемента расписания
+        :param processor:
+        :param item:
+        :return:
+        """
         self._data[processor].append(item)
 
     def add_wait(self, processor, time):
+        """
+        Добавляет ожидание
+        :param processor:
+        :param time:
+        :return:
+        """
         self.add_item(processor, Wait(time))
 
     def add_task(self, processor, name, time):
+        """
+        Добавляет таск
+        :param processor:
+        :param name:
+        :param time:
+        :return:
+        """
         self.add_item(processor, Task(name, time))
 
     def busy_time(self, processor):
+        """
+        Вычисляет полное время занятости заданного процессора
+        :param processor:
+        :return:
+        """
         return sum(item.time for item in self._data[processor])
 
     def max_busy_time(self):
+        """
+        Вычисляет максимальное время занятости по всем процессорам (время
+        занятости по расписанию)
+        :return:
+        """
         return max(
             sum(item.time for item in items)
             for _, items in self
         )
 
     def _iterate_task_flow_times(self):
+        """
+        Генератор для последовательности значений flow time
+        для каждой таски
+        :return:
+        """
         for _, items in self:
             time_passed = 0
             for item in items:
@@ -59,12 +110,24 @@ class Schedule:
                     yield (item, time_passed)
 
     def task_flow_times(self):
+        """
+        Возвращает словарь вида {таск: flow time, ...}
+        :return:
+        """
         return {task.name: flow_time for task, flow_time in self._iterate_task_flow_times()}
 
     def total_flow_time(self):
+        """
+        Возвращает total flow time расписания
+        :return:
+        """
         return sum(map(lambda x: x[1], self._iterate_task_flow_times()))
 
     def _join_waits(self):
+        """
+        Склеивает находящиеся рядом Wait в один с суммарным их временем
+        :return:
+        """
         for _, items in self:
             i = 1
             item_count = len(items)
@@ -77,11 +140,19 @@ class Schedule:
                     i += 1
 
     def _trim_waits(self):
+        """
+        Удаляет незначащие Wait с конца расписания
+        :return:
+        """
         for _, items in self:
             while items and isinstance(items[-1], Wait):
                 items.pop()
 
     def normalize(self):
+        """
+        Нормализация расписания
+        :return:
+        """
         self._join_waits()
         self._trim_waits()
 
@@ -96,10 +167,15 @@ class Schedule:
                 self.add_wait(processor, max_busy_time - busy_times[processor])
 
     def get_processors(self):
+        """
+        Аксессор для processors
+        :return:
+        """
         return list(self._data.keys())
 
     def copy(self):
         """
+        Возвращает копию расписания
         :rtype Schedule
         :return:
         """
@@ -129,6 +205,11 @@ class Schedule:
         return result
 
     def __add__(self, other):
+        """
+        Перегрузка оператора "+"
+        :param other:
+        :return:
+        """
         result = self.copy()
         result.concat(other)
         return result

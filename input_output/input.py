@@ -1,3 +1,7 @@
+"""
+Функционал ввода данных
+"""
+
 from networkx.readwrite.adjlist import read_adjlist
 import networkx as nx
 import numpy as np
@@ -14,12 +18,14 @@ class InvalidTaskDependencies(BException):
 
 def read_task_dependency_graph(path):
     """
+    считывает граф зависимостей, на входе строка пути
+
     :param str path: file to read dependency graph from
-    :rtype nx.DiGraph
-    :return: task dependency graph
+    :rtype nx.DiGraph - тип возвращаемого значения
+    :return: task dependency graph - описание возвращаемого значения
     :exception FileNotFoundError If file not found
     """
-    base_graph = nx.DiGraph()
+    base_graph = nx.DiGraph()  # konstructor classa sozdaet pustoi graph
     try:
         return read_adjlist(path, create_using=base_graph, nodetype=int)
     except:
@@ -28,6 +34,7 @@ def read_task_dependency_graph(path):
 
 def read_task_parameters(path):
     """
+    считывает матрицу времен возвращает двумерный массив
     :param str path: CSV-formatted file to read task parameters from
     :rtype np.matrix
     :return: task parameters matrix

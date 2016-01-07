@@ -1,3 +1,7 @@
+"""
+Модуль, отвечающий за работу с графом зависимостей
+"""
+
 import networkx as nx
 from itertools import groupby
 from classes.exception import BaseException as BException
@@ -31,7 +35,9 @@ def get_node_levels(graph):
 
 def iterate_levels(graph):
     """
-    Returns iterator which yields (level, nodes iterable) tuple on each iteration
+    Returns iterator which yields (level, nodes list) tuple on each iteration
+
+    Возвращает итератор, который на каждой итерации по нему выдаёт пару (номер уровня, список вершин)
 
     :param nx.DiGraph graph:
     :return: iterator

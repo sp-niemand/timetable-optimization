@@ -1,3 +1,7 @@
+"""
+Функционал вывода данных (на экран либо в картинку)
+"""
+
 import numpy as np
 import networkx as nx
 

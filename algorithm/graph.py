@@ -1,3 +1,7 @@
+"""
+Общие алгоритмы работы с графами
+"""
+
 import networkx as nx
 from networkx.algorithms.flow.utils import build_residual_network
 from networkx.algorithms.shortest_paths.weighted import _dijkstra
@@ -17,6 +21,14 @@ def successive_shortest_path(network, source, sink):
     """
 
     def _cost_optimal_augmenting_path(graph, source, target):
+        """
+        Возвращает оптимальный увеличивающий путь, используя
+        алгоритм Дейкстры
+        :param graph:
+        :param source:
+        :param target:
+        :return:
+        """
         paths = {source: [source]}
         (length, path) = _dijkstra(graph, source, target=target, paths=paths, get_weight=lambda u, v, edata:
              None if edata.get('capacity') <= 0 else edata.get('cost'))
@@ -25,11 +37,23 @@ def successive_shortest_path(network, source, sink):
         return path[target]
 
     def _augment_flow(graph, path, flow_diff):
+        """
+        Увеличивает поток по заданному увеличивающему пути на значение flow_diff
+        :param graph:
+        :param path:
+        :param flow_diff:
+        :return:
+        """
         for u, v in zip(path[:-1], path[1:]):
             graph[u][v]['capacity'] = graph[u][v]['capacity'] - flow_diff
             graph[v][u]['capacity'] = graph[v][u]['capacity'] + flow_diff
 
     def _build_residual_network(network):
+        """
+        Строит остаточную сеть для заданной сети
+        :param network:
+        :return:
+        """
         result = build_residual_network(network, 'capacity')
         # add costs for residual edges using their original counterparts
         for u, v, cost in network.edges_iter(data='cost'):
@@ -38,11 +62,26 @@ def successive_shortest_path(network, source, sink):
         return result
 
     def _reduce_cost(residual_network, network, potentials):
+        """
+        Модифицирует стоимости ребёр, чтобы в остаточной сети не было ребер с
+        отрицательной стоимостью
+        :param residual_network:
+        :param network:
+        :param potentials:
+        :return:
+        """
         for u, v, cost in network.edges_iter(data='cost'):
             residual_network[u][v]['cost'] = cost + potentials[u] - potentials[v]
             residual_network[v][u]['cost'] = 0
 
     def _remove_2cycles_in_residual_network(graph):
+        """
+        Удаление 2-циклов с заменой их на одно рёбро, capacity которого
+        равно разнице capacity составляющих 2-цикла, а направлено ребро в сторону,
+        в которую была направлена большая из его составляющих
+        :param graph:
+        :return:
+        """
         for u in residual_network.nodes_iter():
             for v in residual_network.successors(u):
                 if not residual_network.has_edge(v, u):
@@ -58,6 +97,12 @@ def successive_shortest_path(network, source, sink):
                     del residual_network[u][v], residual_network[v][u]
 
     def _residual_network_to_flow_dict(residual_network):
+        """
+        Собирает по остаточной сети данные, необходимые для расшифровки
+        в результирующее расписание
+        :param residual_network:
+        :return:
+        """
         result = {}
         for u, v, capacity in residual_network.edges_iter(data='capacity'):
             if capacity == 0:
@@ -72,6 +117,7 @@ def successive_shortest_path(network, source, sink):
     _reduce_cost(residual_network, network, node_potentials)
 
     while True:
+        # TODO: maybe we must recalculate node_potentials on every iteration
         try:
             augmenting_path = _cost_optimal_augmenting_path(residual_network, source, sink)
         except nx.NetworkXNoPath:
