@@ -5,7 +5,6 @@
 import numpy as np
 import networkx as nx
 
-# TODO: визуализировать результирующее расписание
 # TODO: визуализировать транспортную сеть, созданную для нахождения расписания
 # TODO: визуализировать на этой транспортной сети найденный макс. поток
 
@@ -40,3 +39,53 @@ def write_schedule(schedule, path=None):
             f.write(message)
     else:
         print(message)
+
+
+def draw_schedule(schedule, path):
+    """
+    Сохраняет изображение для заданного расписания
+
+    :param classes.schedule.Schedule schedule:
+    :param str path:
+    :return:
+    """
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches(12, 6)
+
+    ax.set_xlabel('time')
+    ax.grid(True, axis='x')
+
+    sorted_processors = sorted(schedule.get_processors())
+    proc_count = len(sorted_processors)
+
+    tick_data = [(p + 0.5, '$P_{}$'.format(p)) for p in sorted_processors]
+    plt.yticks(*zip(*tick_data))
+    ax.set_ylim(proc_count, 0)
+    ax.set_xlim(0, schedule.max_busy_time())
+    # ax.set_axisbelow(True)
+
+    for processor, task_intervals in schedule.get_task_intervals().items():
+        for task_name, task_start, task_finish in task_intervals:
+            plt.broken_barh([(task_start, task_finish)], (processor, 1),
+                            linestyle='solid', edgecolor='black', facecolor='yellow')
+            plt.text(task_start + 0.5, processor + 0.5, task_name,
+                     verticalalignment='center', horizontalalignment='center')
+
+    plt.tight_layout()
+    plt.savefig(path)
+
+if __name__ == '__main__':
+    from classes.schedule import Schedule
+    s = Schedule([0, 1, 2])
+    s.add_task(0, 0, 3)
+    s.add_wait(0, 2)
+    s.add_task(0, 1, 1)
+    s.add_wait(1, 3)
+    s.add_task(1, 2, 1)
+    s.add_task(1, 3, 10)
+    s.add_wait(1, 10)
+    s.add_task(1, 4, 1)
+    print(str(s))
+    draw_schedule(s, 'test.png')

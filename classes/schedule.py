@@ -2,6 +2,8 @@
 Класс расписания
 """
 
+# TODO: проверить, чтобы везде использовались ЦЕЛЫЕ ЧИСЛА
+
 from copy import deepcopy
 from classes.exception import BaseException as BException
 
@@ -169,9 +171,26 @@ class Schedule:
     def get_processors(self):
         """
         Аксессор для processors
+        :rtype list
         :return:
         """
         return list(self._data.keys())
+
+    def get_task_intervals(self):
+        """
+        Возвращает интервалы выполнения каждой таски
+        :return: Словарь, в котором для каждого процессора определен список,
+        в котором каждый элемент - (имя таски, время её начала, время её завершения)
+        """
+        result = {}
+        for processor, items in self:
+            result[processor] = []
+            time_passed = 0
+            for item in items:
+                if isinstance(item, Task):
+                    result[processor].append((item.name, time_passed, time_passed + item.time))
+                time_passed += item.time
+        return result
 
     def copy(self):
         """
