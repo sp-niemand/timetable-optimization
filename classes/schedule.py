@@ -218,7 +218,7 @@ class Schedule:
         return self
 
     def __str__(self, *args, **kwargs):
-        result = 'Schedule'
+        result = 'Schedule\nTotal flow time = {}'.format(self.total_flow_time())
         for processor, items in self:
             result += '\n{}: {}'.format(processor, ', '.join(str(item) for item in items))
         return result

@@ -17,6 +17,19 @@ def write_graph(graph, path):
     nx.write_adjlist(graph, path)
 
 
+def write_dependency_graph(g):
+    """
+    :param networkx.DiGraph g:
+    :return:
+    """
+    from algorithm.dependency import iterate_levels
+    print(
+        '\n'.join('Level {}: {}'.format(
+            level, ', '.join(map(str, nodes))
+        ) for level, nodes in iterate_levels(g))
+    )
+
+
 def write_matrix(matrix, path):
     """
     :param np.matrix matrix:
@@ -33,7 +46,7 @@ def write_schedule(schedule, path=None):
     :param str|None path:
     :return:
     """
-    message = 'Total flow time = {}\n{}'.format(schedule.total_flow_time(), str(schedule))
+    message = str(schedule)
     if path:
         with open(path, 'w') as f:
             f.write(message)
