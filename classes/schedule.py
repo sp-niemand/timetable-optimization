@@ -2,7 +2,6 @@
 Класс расписания
 """
 
-# TODO: проверить, чтобы везде использовались ЦЕЛЫЕ ЧИСЛА
 
 from copy import deepcopy
 from classes.exception import BaseException as BException

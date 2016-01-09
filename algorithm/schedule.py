@@ -57,11 +57,13 @@ def create_schedule_graph(task_costs):
     return result
 
 
-def get_optimal_schedule(task_costs):
+def get_optimal_schedule(task_costs, export_intermediate_results = False, export_file_name_prefix=''):
     """
     Возвращает оптимальное расписание
 
     :param np.matrix task_costs:
+    :param bool export_intermediate_results:
+    :param str export_file_name_prefix:
     :rtype classes.schedule.Schedule
     :return:
     """
@@ -82,6 +84,9 @@ def get_optimal_schedule(task_costs):
     processor_count, task_count = task_costs.shape
 
     problem_graph = create_schedule_graph(task_costs)
+    if export_intermediate_results:
+        from input_output.export import export_graph
+        export_graph(problem_graph, export_file_name_prefix + 'problem_graph')
     flow_dict = successive_shortest_path(problem_graph, 'x0', 'y0')
 
     schedule_dict = {p: [-1] * task_count for p in range(0, processor_count)}

@@ -5,9 +5,6 @@
 import numpy as np
 import networkx as nx
 
-# TODO: визуализировать транспортную сеть, созданную для нахождения расписания
-# TODO: визуализировать на этой транспортной сети найденный макс. поток
-
 
 def write_graph(graph, path):
     """
@@ -79,7 +76,6 @@ def draw_schedule(schedule, path):
     ax.set_xlim(0, max_busy_time)
     ax.xaxis.set_ticks(range(0, max_busy_time), minor=True)
     ax.grid(True, axis='x', which='both')
-    # ax.set_axisbelow(True) # uncomment this to draw above grid lines
 
     for processor, task_intervals in schedule.get_task_intervals().items():
         for task_name, task_start, task_finish in task_intervals:

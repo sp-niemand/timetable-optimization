@@ -51,6 +51,6 @@ def read_task_parameters(path):
         except:
             raise InvalidTaskParameters('Error encountered while reading task parameters file')
     try:
-        return np.matrix(result, np.uint)  # TODO: get rid of numpy.matrix
+        return np.matrix(result, np.uint)
     except:
         raise InvalidTaskParameters('Error encountered while reading task parameters file')

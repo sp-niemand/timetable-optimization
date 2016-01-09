@@ -34,23 +34,25 @@ def validate_dependency_graph(dependency_graph, task_costs):
     return None
 
 
-def get_optimal_schedule(task_costs, dependency_graph):
+def get_optimal_schedule(task_costs, dependency_graph, export_intermediate_results = False):
     """
     Возвращает расписание для зависимых задач
 
     :param numpy.matrix task_costs:
     :param networkx.DiGraph dependency_graph:
+    :param bool export_intermediate_results:
     :return:
     :raises NoOptimalSchedule If failed to calculate optimal schedule
     """
     processor_count, _ = task_costs.shape
     result = Schedule(list(range(0, processor_count)))
     try:
-
-        #обходим граф зависимости по уровням
+        # обходим граф зависимости по уровням
         for (level, tasks) in ad.iterate_levels(dependency_graph):
             # составление подматрицы для уровня тасок
-            stage_schedule = at.get_optimal_schedule(task_costs[:, tasks])
+            stage_schedule = at.get_optimal_schedule(task_costs[:, tasks],
+                                                     export_intermediate_results=True,
+                                                     export_file_name_prefix='level{}_'.format(level))
             # переименование тасков правильно
             for proc, items in stage_schedule:
                 for item in items:

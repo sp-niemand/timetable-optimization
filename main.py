@@ -5,13 +5,21 @@ import sys
 from input_output.input import read_task_parameters
 from input_output.input import InvalidTaskParameters, InvalidTaskDependencies
 from input_output.visualization import write_schedule
+from input_output.visualization import draw_schedule
+
+import input_output.export as export
+
+SCHEDULE_IMAGE_NAME = 'schedule.png'
 
 # get and validate command line parameters
 
 parser = argparse.ArgumentParser(description='Gets optimal schedules.')
 parser.add_argument('--task-parameter-path', '-p', required=True, type=str, help='path to the task configuration file')
 parser.add_argument('--task-dependency-path', '-d', type=str, help='path to the task dependency file')
-parser.add_argument('--timetable-image', '-i', type=str, help='path to the resulting timetable image')
+parser.add_argument('--intermediate-results', '-i', type=bool, nargs='?', const=True, default=False,
+                    help='should intermediate results be exported to files')
+parser.add_argument('--results-path', '-r', type=str, default='.',
+                    help='path for the resulting schedule image and intermediate results to be exported to')
 args = parser.parse_args()
 
 if not os.path.isfile(args.task_parameter_path):
@@ -22,11 +30,13 @@ if args.task_dependency_path and not os.path.isfile(args.task_dependency_path):
     print('Wrong tasks dependency path given!')
     sys.exit(1)
 
-if args.timetable_image and not args.timetable_image.endswith('.png'):
-    print('Only *.png files can be used to visualize timetables!')
+if not os.path.isdir(args.results_path):
+    print('Wrong results path given!')
     sys.exit(1)
 
 # main logic
+
+export.path = args.results_path
 
 try:
     task_costs = read_task_parameters(args.task_parameter_path)
@@ -52,6 +62,8 @@ if args.task_dependency_path:
         sys.exit(1)
 
     write_dependency_graph(task_dependencies)
+    if args.intermediate_results:
+        export.export_graph(task_dependencies, 'dependency_graph')
 
     try:
         schedule = get_optimal_schedule(task_costs, task_dependencies)
@@ -63,6 +75,6 @@ else:
     print("No task dependencies")
     schedule = get_optimal_schedule(task_costs)
 write_schedule(schedule)
-if args.timetable_image:
-    from input_output.visualization import draw_schedule
-    draw_schedule(schedule, args.timetable_image)
+draw_schedule(schedule, os.path.join(args.results_path, SCHEDULE_IMAGE_NAME))
+
+# TODO: алгоритм оптимизации построения расписания для зависимых задач с помощью жадного алгоритма отбора задач на свободные места
