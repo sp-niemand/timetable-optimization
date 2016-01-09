@@ -67,7 +67,7 @@ class Schedule:
         :param time:
         :return:
         """
-        self.add_item(processor, Wait(time))
+        self.add_item(processor, Wait(int(time)))
 
     def add_task(self, processor, name, time):
         """
@@ -77,7 +77,7 @@ class Schedule:
         :param time:
         :return:
         """
-        self.add_item(processor, Task(name, time))
+        self.add_item(processor, Task(name, int(time)))
 
     def busy_time(self, processor):
         """
