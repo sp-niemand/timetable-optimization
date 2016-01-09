@@ -52,10 +52,9 @@ def draw_schedule(schedule, path):
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
-    fig.set_size_inches(12, 6)
+    fig.set_size_inches(8, 4)
 
     ax.set_xlabel('time')
-    ax.grid(True, axis='x')
 
     sorted_processors = sorted(schedule.get_processors())
     proc_count = len(sorted_processors)
@@ -63,12 +62,15 @@ def draw_schedule(schedule, path):
     tick_data = [(p + 0.5, '$P_{}$'.format(p)) for p in sorted_processors]
     plt.yticks(*zip(*tick_data))
     ax.set_ylim(proc_count, 0)
-    ax.set_xlim(0, schedule.max_busy_time())
-    # ax.set_axisbelow(True)
+    max_busy_time = schedule.max_busy_time()
+    ax.set_xlim(0, max_busy_time)
+    ax.xaxis.set_ticks(range(0, max_busy_time), minor=True)
+    ax.grid(True, axis='x', which='both')
+    # ax.set_axisbelow(True) # uncomment this to draw above grid lines
 
     for processor, task_intervals in schedule.get_task_intervals().items():
         for task_name, task_start, task_finish in task_intervals:
-            plt.broken_barh([(task_start, task_finish)], (processor, 1),
+            plt.broken_barh([(task_start, task_finish - task_start)], (processor, 1),
                             linestyle='solid', edgecolor='black', facecolor='yellow')
             plt.text(task_start + 0.5, processor + 0.5, task_name,
                      verticalalignment='center', horizontalalignment='center')

@@ -185,11 +185,11 @@ class Schedule:
         result = {}
         for processor, items in self:
             result[processor] = []
-            time_passed = 0
+            item_start = 0
             for item in items:
                 if isinstance(item, Task):
-                    result[processor].append((item.name, time_passed, time_passed + item.time))
-                time_passed += item.time
+                    result[processor].append((item.name, item_start, item_start + item.time))
+                item_start += item.time
         return result
 
     def copy(self):
