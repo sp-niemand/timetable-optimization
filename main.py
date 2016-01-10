@@ -76,10 +76,12 @@ if args.task_dependency_path or args.randomize_dependency:
             exit_printing_error(e)
     else:
         task_count = task_costs.shape[1]
+        levels_to_generate = min(TASK_DEPENDENCY_LEVELS_TO_GENERATE, task_count)
+        print(task_count, levels_to_generate)
         task_dependencies = i.random_dependency_graph(
                 list(range(0, task_count)),
-                TASK_DEPENDENCY_LEVELS_TO_GENERATE,
-                task_count // TASK_DEPENDENCY_LEVELS_TO_GENERATE)
+                levels_to_generate,
+                task_count // levels_to_generate)
 
     error = ads.validate_dependency_graph(task_dependencies, task_costs)
     if error:

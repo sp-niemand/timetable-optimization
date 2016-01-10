@@ -66,7 +66,7 @@ def random_dependency_graph(tasks, level_count, max_tasks_on_level):
     :return:
     """
     remaining_tasks = tasks.copy()
-    min_tasks_on_level = max(max_tasks_on_level / 2, 1)
+    min_tasks_on_level = max(max_tasks_on_level // 2, 1)
     result = nx.DiGraph()
     for level in range(0, level_count):
         level_task_count = random.randint(min_tasks_on_level, max_tasks_on_level)
