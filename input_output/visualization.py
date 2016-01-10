@@ -4,6 +4,7 @@
 
 import numpy as np
 import networkx as nx
+import util as u
 
 
 def write_graph(graph, path):
@@ -61,6 +62,10 @@ def draw_schedule(schedule, path):
     """
     import matplotlib.pyplot as plt
 
+    if u.is_windows():
+        import matplotlib
+        matplotlib.use('tkagg')
+
     fig, ax = plt.subplots()
     fig.set_size_inches(30, 6)
 
@@ -86,6 +91,8 @@ def draw_schedule(schedule, path):
 
     plt.tight_layout()
     plt.savefig(path)
+    if u.is_windows():
+        plt.show()
 
 if __name__ == '__main__':
     from classes.schedule import Schedule

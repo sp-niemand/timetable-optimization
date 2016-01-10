@@ -2,9 +2,11 @@
 Нахождение оптимального расписания для независимых задач
 """
 
-import numpy as np
-import networkx as nx
 from itertools import dropwhile
+
+import networkx as nx
+import numpy as np
+
 from algorithm.graph import successive_shortest_path
 from classes.schedule import Schedule
 
