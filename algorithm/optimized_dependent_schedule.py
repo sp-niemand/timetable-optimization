@@ -108,7 +108,7 @@ def get_optimal_schedule(task_costs, dependency_graph, export_intermediate_resul
 
             # составление подматрицы для уровня тасок
             stage_schedule = at.get_optimal_schedule(task_costs[:, remaining_tasks],
-                                                     export_intermediate_results=True,
+                                                     export_intermediate_results=export_intermediate_results,
                                                      export_file_name_prefix='level{}_'.format(level))
             # переименование тасков правильно
             for proc, items in stage_schedule:
