@@ -2,14 +2,15 @@ import argparse
 import os.path
 import sys
 
-from input_output.input import read_task_parameters
-from input_output.input import InvalidTaskParameters, InvalidTaskDependencies
-from input_output.visualization import write_schedule
-from input_output.visualization import draw_schedule
-
 import input_output.export as export
+from input_output.input import InvalidTaskParameters, InvalidTaskDependencies
+from input_output.input import read_task_parameters
+from input_output.visualization import draw_schedule
+from input_output.visualization import write_schedule
+import util
 
 SCHEDULE_IMAGE_NAME = 'schedule.png'
+SCHEDULE_OPTIMIZED_IMAGE_NAME = 'schedule_opt.png'
 
 # get and validate command line parameters
 
@@ -46,7 +47,8 @@ except InvalidTaskParameters as e:
 
 if args.task_dependency_path:
     from input_output.input import read_task_dependency_graph
-    from algorithm.dependent_schedule import get_optimal_schedule, NoOptimalSchedule, validate_dependency_graph
+    import algorithm.dependent_schedule as ads
+    import algorithm.optimized_dependent_schedule as aods
     from input_output.visualization import write_dependency_graph
     print("Task dependencies given")
 
@@ -56,7 +58,7 @@ if args.task_dependency_path:
         print(e)
         sys.exit(1)
 
-    error = validate_dependency_graph(task_dependencies, task_costs)
+    error = ads.validate_dependency_graph(task_dependencies, task_costs)
     if error:
         print("Dependency graph validation error: {}".format(error))
         sys.exit(1)
@@ -66,15 +68,29 @@ if args.task_dependency_path:
         export.export_graph(task_dependencies, 'dependency_graph')
 
     try:
-        schedule = get_optimal_schedule(task_costs, task_dependencies)
-    except NoOptimalSchedule as e:
+        t0 = util.default_timer()
+        schedule = ads.get_optimal_schedule(task_costs, task_dependencies)
+        dt = util.default_timer() - t0
+    except ads.NoOptimalSchedule as e:
         print(e)
         sys.exit(1)
-else:
-    from algorithm.schedule import get_optimal_schedule
-    print("No task dependencies")
-    schedule = get_optimal_schedule(task_costs)
-write_schedule(schedule)
-draw_schedule(schedule, os.path.join(args.results_path, SCHEDULE_IMAGE_NAME))
+    print('\nStaged method (took {0:.3f} ms to finish):'.format(dt * 1000.))
+    write_schedule(schedule)
+    draw_schedule(schedule, os.path.join(args.results_path, SCHEDULE_IMAGE_NAME))
 
-# TODO: особые случаи формирования расписаний
+    try:
+        t0 = util.default_timer()
+        schedule = aods.get_optimal_schedule(task_costs, task_dependencies)
+        dt = util.default_timer() - t0
+    except aods.NoOptimalSchedule as e:
+        print(e)
+        sys.exit(1)
+    print('\nStaged method with packing optimization (took {0:.3f} ms to finish):'.format(dt * 1000))
+    write_schedule(schedule)
+    draw_schedule(schedule, os.path.join(args.results_path, SCHEDULE_OPTIMIZED_IMAGE_NAME))
+else:
+    import algorithm.schedule as asc
+    print("No task dependencies")
+    schedule = asc.get_optimal_schedule(task_costs)
+    write_schedule(schedule)
+    draw_schedule(schedule, os.path.join(args.results_path, SCHEDULE_IMAGE_NAME))
