@@ -5,6 +5,7 @@
 import networkx as nx
 from itertools import groupby
 from classes.exception import BaseException as BException
+import random
 
 
 class NotDirectedAcyclicGraph(BException):

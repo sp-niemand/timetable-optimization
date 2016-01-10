@@ -77,4 +77,4 @@ else:
 write_schedule(schedule)
 draw_schedule(schedule, os.path.join(args.results_path, SCHEDULE_IMAGE_NAME))
 
-# TODO: алгоритм оптимизации построения расписания для зависимых задач с помощью жадного алгоритма отбора задач на свободные места
+# TODO: особые случаи формирования расписаний

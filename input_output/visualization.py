@@ -62,7 +62,7 @@ def draw_schedule(schedule, path):
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
-    fig.set_size_inches(8, 4)
+    fig.set_size_inches(30, 6)
 
     ax.set_xlabel('time')
 

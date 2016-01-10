@@ -86,6 +86,14 @@ class Schedule:
         """
         return sum(item.time for item in self._data[processor])
 
+    def get_items_iter(self, processor):
+        """
+        Итератор по элементам расписания для заданного процессора
+        :param processor:
+        :return:
+        """
+        return iter(self._data[processor])
+
     def max_busy_time(self):
         """
         Вычисляет максимальное время занятости по всем процессорам (время
