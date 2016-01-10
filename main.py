@@ -24,9 +24,9 @@ parser.add_argument('--task-parameter-path', '-p', type=str, help='path to the t
 parser.add_argument('--task-dependency-path', '-d', type=str, help='path to the task dependency file')
 parser.add_argument('--randomize-dependency', '-z', type=bool, nargs='?', const=True, default=False)
 
-parser.add_argument('--tasks-to-generate', '-m', type=int, default=DEFAULT_TASKS_TO_GENERATE,
+parser.add_argument('--tasks-to-generate', '-n', type=int, default=DEFAULT_TASKS_TO_GENERATE,
                     help='number of tasks to randomly generate')
-parser.add_argument('--processors-to-generate', '-n', type=int, default=DEFAULT_PROCESSORS_TO_GENERATE,
+parser.add_argument('--processors-to-generate', '-m', type=int, default=DEFAULT_PROCESSORS_TO_GENERATE,
                     help='number of processors to randomly generate')
 
 parser.add_argument('--intermediate-results', '-i', type=bool, nargs='?', const=True, default=False,
