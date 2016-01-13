@@ -90,6 +90,7 @@ if args.task_dependency_path or args.randomize_dependency:
     write_dependency_graph(task_dependencies)
     if args.intermediate_results:
         export.export_graph(task_dependencies, 'dependency_graph')
+        export.export_dependency_graph(task_dependencies, 'dependency_graph')
 
     try:
         t0 = util.default_timer()

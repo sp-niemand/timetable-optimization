@@ -136,7 +136,7 @@ if __name__ == '__main__':
     #     [1, 7, 8, 1, 4, 4, 8, 1, 6, 7],
     #     [9, 2, 1, 4, 4, 7, 3, 3, 5, 10]
     # ])
-    task_costs = i.random_task_parameters(6, 100, 20)
+    task_costs = i.random_task_parameters(5, 40, 20)
 
 
     # dependency_graph = nx.DiGraph()
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     #     (4, 9),
     #     (7, 8)
     # ])
-    dependency_graph = i.random_dependency_graph(list(range(0, 100)), 10, 10)
+    dependency_graph = i.random_dependency_graph(list(range(0, 40)), 4, 25)
 
     validate_dependency_graph(dependency_graph, task_costs)
 
