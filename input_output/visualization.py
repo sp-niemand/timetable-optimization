@@ -89,7 +89,7 @@ def draw_schedule(schedule, path):
             plt.text(task_start + 0.5, processor + 0.5, task_name,
                      verticalalignment='center', horizontalalignment='center')
 
-    plt.tight_layout()
+    # plt.tight_layout()
     plt.savefig(path)
     if u.is_windows():
         plt.show()
