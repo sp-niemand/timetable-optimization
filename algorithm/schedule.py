@@ -89,7 +89,7 @@ def get_optimal_schedule(task_costs, export_intermediate_results = False, export
     if export_intermediate_results:
         from input_output.export import export_graph
         export_graph(problem_graph, export_file_name_prefix + 'problem_graph')
-    flow_dict = successive_shortest_path(problem_graph, 'x0', 'y0')
+    flow_dict = nx.max_flow_min_cost(problem_graph, 'x0', 'y0', weight='cost')
 
     schedule_dict = {p: [-1] * task_count for p in range(0, processor_count)}
     for start_node in flow_dict:
