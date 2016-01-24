@@ -4,6 +4,7 @@ from classes.schedule import Schedule, Task
 from algorithm.dependency import NotDirectedAcyclicGraph
 from classes.exception import BaseException as BException
 
+
 class NoOptimalSchedule(BException):
     pass
 
@@ -21,16 +22,33 @@ def _add_tasks_to_schedule_without_changing_busy_time(schedule, tasks, task_cost
     """
 
     def _earliest_start_time(task):
+        """
+        Возвращает самое раннее возможное время старта задачи
+        :param int task:
+        :return:
+        """
         predecessors = dependency_graph.predecessors(task)
         return max(task_flow_times[p] for p in predecessors) if predecessors else 0
 
     def _branch_and_bound(processor, tasks):
+        """
+        Возвращает промежуточное расписание для заданного процессора,
+        задачами из которого можно дополнить текущее расписание, не изменив
+        его максимальное время выполнения.
+        :param processor:
+        :param tasks:
+        :return: Пару (промежуточное расписание, нераспределенные задачи)
+        """
+
         class SolutionNode:
+            """
+            Узел принятия решения
+            """
             def __init__(self, schedule, remaining_tasks):
-                self.schedule = schedule
-                self.remaining_tasks = remaining_tasks.copy()
+                self.schedule = schedule  # промежуточное расписание
+                self.remaining_tasks = remaining_tasks.copy()  # ещё не распределенные таски
                 self.total_flow_time = schedule.total_flow_time()
-                self.busy_time = schedule.max_busy_time()
+                self.busy_time = schedule.max_busy_time()  # время выполнения промежуточного расписания в этом узле
 
             def is_better_than(self, other):
                 return self.busy_time > other.busy_time or (
@@ -71,6 +89,7 @@ def _add_tasks_to_schedule_without_changing_busy_time(schedule, tasks, task_cost
     processors = schedule.get_processors()
     task_flow_times = schedule.task_flow_times()
     max_busy_time = schedule.max_busy_time()
+    # минимальное начальное время для каждой таски по зависимостям
     earliest_start_times = {task: _earliest_start_time(task) for task in tasks}
 
     remaining_tasks = tasks

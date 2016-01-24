@@ -23,7 +23,7 @@ def write_dependency_graph(g):
     from algorithm.dependency import iterate_levels
     print(
         '\n'.join('Level {}: {}'.format(
-            level, ', '.join(map(str, nodes))
+            level+1, ', '.join(map(str, nodes))
         ) for level, nodes in iterate_levels(g))
     )
 
